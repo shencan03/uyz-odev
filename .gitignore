@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
+
+# Veri setleri (otomatik indirilir, depoya eklenmez)
+data/
+
+# macOS
+.DS_Store
+
+# Ders dokümanları (depoya eklenmez)
+*.pdf
+Proje 1.Faz Rapor Şablonu.docx
+~$*

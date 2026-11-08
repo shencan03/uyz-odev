@@ -1,0 +1,7 @@
+# Apple Silicon (M serisi) üzerinde MPS hızlandırma destekli PyTorch
+torch>=2.5
+torchvision>=0.20
+numpy>=1.26
+matplotlib>=3.8
+pandas>=2.1
+scikit-learn>=1.4
