@@ -28,3 +28,33 @@ def stratified_split(y: np.ndarray, val_ratio: float = 0.1, seed: int = 42):
         val_idx.append(idx[:n_val])
         train_idx.append(idx[n_val:])
     return np.sort(np.concatenate(train_idx)), np.sort(np.concatenate(val_idx))
+
+
+def channel_stats(x: np.ndarray):
+    """(N,C,H,W) dizisinden kanal başına ortalama ve standart sapma."""
+    return x.mean(axis=(0, 2, 3)), x.std(axis=(0, 2, 3))
+
+
+def normalize(x: np.ndarray, mean, std) -> np.ndarray:
+    """Kanal bazında standardizasyon: (x - mean) / std."""
+    mean = np.asarray(mean, dtype=np.float32).reshape(1, -1, 1, 1)
+    std = np.asarray(std, dtype=np.float32).reshape(1, -1, 1, 1)
+    return (x - mean) / std
+
+
+def prepare(x_train, y_train, x_test, y_test, val_ratio=0.1, seed=42):
+    """Tam ön işleme hattı.
+
+    1) [0,1] ölçekleme  2) stratified doğrulama ayırma
+    3) ortalama/std YALNIZCA eğitim alt kümesinden hesaplanır (veri sızıntısı yok)
+    4) eğitim, doğrulama ve test aynı istatistiklerle normalize edilir.
+    """
+    xtr, xte = to_float(x_train), to_float(x_test)
+    tr_idx, va_idx = stratified_split(y_train, val_ratio, seed)
+    mean, std = channel_stats(xtr[tr_idx])
+    return {
+        "x_train": normalize(xtr[tr_idx], mean, std), "y_train": y_train[tr_idx],
+        "x_val": normalize(xtr[va_idx], mean, std), "y_val": y_train[va_idx],
+        "x_test": normalize(xte, mean, std), "y_test": y_test,
+        "mean": mean.tolist(), "std": std.tolist(),
+    }
