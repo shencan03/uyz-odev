@@ -1,13 +1,8 @@
-"""Ön işleme: ölçekleme, doğrulama ayırma ve normalizasyon."""
 import numpy as np
 
 
 def to_float(x: np.ndarray) -> np.ndarray:
-    """uint8 [0,255] pikselleri float32 [0,1] aralığına ölçekler.
-
-    Fashion-MNIST (N,28,28) -> (N,1,28,28), CIFAR-10 (N,32,32,3) -> (N,3,32,32)
-    biçimine (PyTorch'un kanal-önce düzeni) getirilir.
-    """
+    """[0,1] ölçekleme ve PyTorch kanal-önce düzeni: (N,H,W[,C]) -> (N,C,H,W)."""
     x = x.astype(np.float32) / 255.0
     if x.ndim == 3:
         return x[:, None, :, :]
@@ -31,24 +26,17 @@ def stratified_split(y: np.ndarray, val_ratio: float = 0.1, seed: int = 42):
 
 
 def channel_stats(x: np.ndarray):
-    """(N,C,H,W) dizisinden kanal başına ortalama ve standart sapma."""
     return x.mean(axis=(0, 2, 3)), x.std(axis=(0, 2, 3))
 
 
 def normalize(x: np.ndarray, mean, std) -> np.ndarray:
-    """Kanal bazında standardizasyon: (x - mean) / std."""
     mean = np.asarray(mean, dtype=np.float32).reshape(1, -1, 1, 1)
     std = np.asarray(std, dtype=np.float32).reshape(1, -1, 1, 1)
     return (x - mean) / std
 
 
 def prepare(x_train, y_train, x_test, y_test, val_ratio=0.1, seed=42):
-    """Tam ön işleme hattı.
-
-    1) [0,1] ölçekleme  2) stratified doğrulama ayırma
-    3) ortalama/std YALNIZCA eğitim alt kümesinden hesaplanır (veri sızıntısı yok)
-    4) eğitim, doğrulama ve test aynı istatistiklerle normalize edilir.
-    """
+    """Ortalama/std yalnızca eğitim alt kümesinden hesaplanır (veri sızıntısını önler)."""
     xtr, xte = to_float(x_train), to_float(x_test)
     tr_idx, va_idx = stratified_split(y_train, val_ratio, seed)
     mean, std = channel_stats(xtr[tr_idx])

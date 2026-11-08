@@ -1,11 +1,8 @@
-"""Faz 1'de seçilen model mimarileri (eğitim Faz 2'de yapılacaktır)."""
 import torch
 from torch import nn
 
 
 class LogisticRegression(nn.Module):
-    """Doğrusal başlangıç modeli: 784 piksel -> 10 sınıf (softmax CE ile)."""
-
     def __init__(self, in_features=28 * 28, n_classes=10):
         super().__init__()
         self.net = nn.Sequential(nn.Flatten(), nn.Linear(in_features, n_classes))
@@ -15,8 +12,6 @@ class LogisticRegression(nn.Module):
 
 
 class MLP(nn.Module):
-    """Tek gizli katmanlı çok katmanlı algılayıcı (ReLU + dropout)."""
-
     def __init__(self, in_features=28 * 28, hidden=256, n_classes=10, p=0.2):
         super().__init__()
         self.net = nn.Sequential(
@@ -30,11 +25,6 @@ class MLP(nn.Module):
 
 
 class SmallCNN(nn.Module):
-    """İki evrişim bloklu küçük CNN (CIFAR-10, 3x32x32 girdi).
-
-    [Conv3x3 -> BN -> ReLU -> MaxPool] x2 -> FC(128) -> Dropout -> FC(10)
-    """
-
     def __init__(self, in_ch=3, n_classes=10, p=0.3):
         super().__init__()
         self.features = nn.Sequential(

@@ -35,7 +35,6 @@ def class_means(x, y, classes, title, path, cmap=None):
 def main():
     stats = {}
 
-    # Fashion-MNIST: tek kanal (grayscale)
     xtr, ytr, _, _ = load_fashion_mnist()
     f = xtr.astype(np.float32) / 255.0
     stats["fashion_mnist"] = {"mean": [float(f.mean())], "std": [float(f.std())],
@@ -51,7 +50,6 @@ def main():
     class_means(xtr, ytr, FMNIST_CLASSES, "Fashion-MNIST sınıf ortalama görüntüleri",
                 FIG / "fmnist_class_means.png", cmap="gray")
 
-    # CIFAR-10: üç kanal (RGB)
     xtr, ytr, _, _ = load_cifar10()
     c = xtr.astype(np.float32) / 255.0
     stats["cifar10"] = {"mean": c.mean((0, 1, 2)).tolist(),

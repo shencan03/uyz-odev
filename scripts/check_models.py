@@ -1,4 +1,3 @@
-"""Model tanımlarının seçilen cihazda (Apple Silicon: MPS) doğrulanması."""
 import sys
 from pathlib import Path
 

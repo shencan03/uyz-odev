@@ -23,7 +23,6 @@ CIFAR10_CLASSES = [
 
 
 def get_device() -> torch.device:
-    """Apple Silicon'da MPS, yoksa CUDA, o da yoksa CPU döndürür."""
     if torch.backends.mps.is_available():
         return torch.device("mps")
     if torch.cuda.is_available():
